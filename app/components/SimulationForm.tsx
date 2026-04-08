@@ -3,6 +3,16 @@
 import { useState } from "react";
 
 export default function SimulationForm() {
+  const [resultado, setResultado] = useState<{
+    montanteFinal: number;
+    montanteLiquido: number;
+    comparativoCDI: {
+      taxa: number;
+      monatanteFinal: number;
+      montanteLiquido: number;
+    };
+  } | null>(null);
+
   const [formData, setFormData] = useState({
     investimentoInicial: "",
     aporteMensal: "",
@@ -17,16 +27,32 @@ export default function SimulationForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Dados:", formData);
-    alert(`Dados: ${formData}`)
+    const response = await fetch("http://localhost:3001/simulations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        aporteInicial: Number(formData.investimentoInicial),
+        aporteMensal: Number(formData.aporteMensal),
+        taxaAnual: Number(formData.taxaAnual),
+        tempoInvestimento: Number(formData.tempoInvestimento),
+        reajusteAnual: Number(formData.reajusteAnual),
+        tipoInvestimento: formData.tipoInvestimento,
+      }),
+    });
+
+    const data = await response.json()
+    setResultado(data)
+    alert(data)
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Investimento Inicial (R$)</label>
+        <label className="text-sm font-medium text-gray-700">
+          Investimento Inicial (R$)
+        </label>
         <input
           type="number"
           name="investimentoInicial"
@@ -37,7 +63,9 @@ export default function SimulationForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Aporte Mensal (R$)</label>
+        <label className="text-sm font-medium text-gray-700">
+          Aporte Mensal (R$)
+        </label>
         <input
           type="number"
           name="aporteMensal"
@@ -48,7 +76,9 @@ export default function SimulationForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Taxa Anual (%)</label>
+        <label className="text-sm font-medium text-gray-700">
+          Taxa Anual (%)
+        </label>
         <input
           type="number"
           name="taxaAnual"
@@ -59,7 +89,9 @@ export default function SimulationForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Tempo de Investimento (anos)</label>
+        <label className="text-sm font-medium text-gray-700">
+          Tempo de Investimento (anos)
+        </label>
         <input
           type="number"
           name="tempoInvestimento"
@@ -70,7 +102,9 @@ export default function SimulationForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Reajuste Anual (%)</label>
+        <label className="text-sm font-medium text-gray-700">
+          Reajuste Anual (%)
+        </label>
         <input
           type="number"
           name="reajusteAnual"
@@ -81,11 +115,18 @@ export default function SimulationForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Tipo de Investimento</label>
+        <label className="text-sm font-medium text-gray-700">
+          Tipo de Investimento
+        </label>
         <select
           name="tipoInvestimento"
           value={formData.tipoInvestimento}
-          onChange={(e) => setFormData((prev) => ({ ...prev, tipoInvestimento: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              tipoInvestimento: e.target.value,
+            }))
+          }
           className="border border-gray-300 rounded-md p-2 text-gray-800"
         >
           <option value="">Selecione</option>
