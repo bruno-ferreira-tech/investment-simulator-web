@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SimulationChart from "./SimulationChart";
 
 export default function SimulationForm() {
   const [resultado, setResultado] = useState<{
@@ -11,6 +12,7 @@ export default function SimulationForm() {
       monatanteFinal: number;
       montanteLiquido: number;
     };
+    meses: Record<number, number>
   } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -180,6 +182,7 @@ export default function SimulationForm() {
           </p>
         </div>
       )}
+      {resultado && <SimulationChart meses={resultado.meses} />}
     </form>
   );
 }
