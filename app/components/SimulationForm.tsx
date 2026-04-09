@@ -42,9 +42,8 @@ export default function SimulationForm() {
       }),
     });
 
-    const data = await response.json()
-    setResultado(data)
-    alert(data)
+    const data = await response.json();
+    setResultado(data);
   };
 
   return (
@@ -141,6 +140,46 @@ export default function SimulationForm() {
       >
         Simular
       </button>
+      {resultado && (
+        <div className="mt-6 p-4 bg-white rounded-md border border-gray-200 flex flex-col gap-2">
+          <h2 className="text-lg font-semibold text-gray-800">Resultado</h2>
+
+          <p className="text-gray-700">
+            Montante Bruto:{" "}
+            <span className="font-bold">
+              {resultado.montanteFinal.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </p>
+
+          <p className="text-gray-700">
+            Montante Líquido:{" "}
+            <span className="font-bold">
+              {resultado.montanteLiquido.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </p>
+
+          <hr className="my-2" />
+
+          <p className="text-sm text-gray-500">
+            Comparativo CDI ({resultado.comparativoCDI.taxa}% a.a.)
+          </p>
+          <p className="text-gray-700">
+            Montante líquido no CDI:{" "}
+            <span className="font-bold">
+              {resultado.comparativoCDI.montanteLiquido.toLocaleString(
+                "pt-BR",
+                { style: "currency", currency: "BRL" },
+              )}
+            </span>
+          </p>
+        </div>
+      )}
     </form>
   );
 }
