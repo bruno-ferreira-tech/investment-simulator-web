@@ -7,12 +7,16 @@ export default function SimulationForm() {
   const [resultado, setResultado] = useState<{
     montanteFinal: number;
     montanteLiquido: number;
+    montantePresenteFinal: number;
+    montantePresenteLiquido: number;
     comparativoCDI: {
       taxa: number;
-      monatanteFinal: number;
+      montanteFinal: number;
       montanteLiquido: number;
+      montantePresenteFinal: number;
+      montantePresenteLiquido: number;
     };
-    meses: Record<number, number>
+    meses: Record<number, number>;
   } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -22,6 +26,7 @@ export default function SimulationForm() {
     tempoInvestimento: "",
     reajusteAnual: "",
     tipoInvestimento: "",
+    inflacao: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +46,7 @@ export default function SimulationForm() {
         tempoInvestimento: Number(formData.tempoInvestimento),
         reajusteAnual: Number(formData.reajusteAnual),
         tipoInvestimento: formData.tipoInvestimento,
+        inflacao: Number(formData.inflacao),
       }),
     });
 
@@ -117,6 +123,19 @@ export default function SimulationForm() {
 
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700">
+          Inflação Anual (%)
+        </label>
+        <input
+          type="number"
+          name="inflacao"
+          value={formData.inflacao}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-md p-2 text-gray-800"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-gray-700">
           Tipo de Investimento
         </label>
         <select
@@ -142,6 +161,7 @@ export default function SimulationForm() {
       >
         Simular
       </button>
+
       {resultado && (
         <div className="mt-6 p-4 bg-white rounded-md border border-gray-200 flex flex-col gap-2">
           <h2 className="text-lg font-semibold text-gray-800">Resultado</h2>
@@ -160,6 +180,26 @@ export default function SimulationForm() {
             Montante Líquido:{" "}
             <span className="font-bold">
               {resultado.montanteLiquido.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </p>
+
+          <p className="text-gray-700">
+            Montante Presente Bruto:{" "}
+            <span className="font-bold">
+              {resultado.montantePresenteFinal.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </p>
+
+          <p className="text-gray-700">
+            Montante Presente Líquido:{" "}
+            <span className="font-bold">
+              {resultado.montantePresenteLiquido.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               })}
